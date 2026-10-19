@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Register — CampusFix</title>
+
+    <link
+        rel="stylesheet"
+        href="./css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="auth-page">
+
+
+    <!-- Brand Side -->
+
+    <div class="auth-brand-panel">
+
+        <div class="auth-brand-content">
+
+            <div class="brand-logo">
+
+                <span class="brand-icon">
+                    ✦
+                </span>
+
+                <span>
+                    CampusFix
+                </span>
+
+            </div>
+
+
+            <div class="auth-orbit"></div>
+
+
+            <h1>
+
+                Join your campus
+
+                <span>
+                    maintenance network.
+                </span>
+
+            </h1>
+
+
+            <p>
+
+                Create your CampusFix account and make reporting
+                campus maintenance issues simple and transparent.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Register Card -->
+
+    <div class="auth-container">
+
+        <div class="auth-card">
+
+            <div class="auth-form">
+
+
+                <div class="auth-header">
+
+                    <span class="auth-eyebrow">
+                        GET STARTED
+                    </span>
+
+
+                    <h2>
+                        Create account
+                    </h2>
+
+
+                    <p>
+                        Enter your details to create your CampusFix account.
+                    </p>
+
+                </div>
+
+
+
+                <form id="registerForm">
+
+
+                    <!-- Name -->
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Full name
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                        >
+
+                    </div>
+
+
+
+                    <!-- Email -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                        >
+
+                    </div>
+
+
+
+                    <!-- Password -->
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Create a password"
+                                autocomplete="new-password"
+                            >
+
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="password-toggle"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Account Type -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Account type
+                        </label>
+
+
+                        <input
+                            type="text"
+                            value="Student"
+                            disabled
+                        >
+
+                    </div>
+
+
+
+                    <!-- Error / Success -->
+
+                    <div
+                        id="registerMessage"
+                        class="auth-message hidden"
+                    ></div>
+
+
+
+                    <!-- Submit -->
+
+                    <button
+                        type="submit"
+                        id="registerButton"
+                        class="auth-submit"
+                    >
+
+                        <span id="registerButtonText">
+                            Create account
+                        </span>
+
+
+                        <span
+                            id="registerSpinner"
+                            class="auth-spinner hidden"
+                        ></span>
+
+                    </button>
+
+                </form>
+
+
+
+                <div class="auth-footer">
+
+                    <span>
+                        Already have an account?
+                    </span>
+
+
+                    <a href="./login.html">
+                        Sign in
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script src="./js/common.js"></script>
+    <script src="./js/fx.js"></script>
+
+<script src="./js/register.js"></script>
+
+
+</body>
+
+</html>

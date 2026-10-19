@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Dashboard — CampusFix</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/student.css">
+</head>
+
+<body class="dashboard-page">
+
+    <!-- Ambient Background -->
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="dashboard-sidebar">
+
+        <a href="index.html" class="dashboard-brand">
+
+            <div class="brand-mark">
+                <span></span>
+            </div>
+
+            <div class="brand-text">
+                <strong>CampusFix</strong>
+                <small>Smart Campus Maintenance</small>
+            </div>
+
+        </a>
+
+
+        <nav class="dashboard-nav">
+
+            <a
+                href="#"
+                class="dashboard-nav-item active"
+            >
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a
+                href="#new-request"
+                class="dashboard-nav-item"
+            >
+                <span>＋</span>
+                New Request
+            </a>
+
+            <a
+                href="#my-requests"
+                class="dashboard-nav-item"
+            >
+                <span>◷</span>
+                My Requests
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="sidebar-user">
+
+                <div class="sidebar-avatar" id="sidebarAvatar">
+                    A
+                </div>
+
+                <div>
+                    <strong id="sidebarUserName">
+                        Student
+                    </strong>
+
+                    <small>
+                        Student
+                    </small>
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="sidebar-logout"
+            >
+                <span>↪</span>
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="dashboard-main">
+
+
+        <!-- Topbar -->
+
+        <header class="dashboard-topbar">
+
+            <div>
+
+                <span class="dashboard-eyebrow">
+                    STUDENT DASHBOARD
+                </span>
+
+                <h1>
+                    Welcome,
+                    <span id="welcomeName"> Student</span>
+                </h1>
+
+            </div>
+
+
+            <div class="dashboard-profile">
+
+                <div
+                    class="dashboard-avatar"
+                    id="dashboardAvatar"
+                >
+                    A
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             STATS
+             ================================================= -->
+
+        <section class="dashboard-stats">
+
+            <article class="dashboard-stat-card">
+
+                <div class="stat-icon blue">
+                    ▦
+                </div>
+
+                <div>
+
+                    <small>
+                        TOTAL REQUESTS
+                    </small>
+
+                    <strong id="totalRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        All your requests
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <article class="dashboard-stat-card">
+
+                <div class="stat-icon gold">
+                    ◷
+                </div>
+
+                <div>
+
+                    <small>
+                        PENDING
+                    </small>
+
+                    <strong id="pendingRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        Awaiting action
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <article class="dashboard-stat-card">
+
+                <div class="stat-icon mint">
+                    ↻
+                </div>
+
+                <div>
+
+                    <small>
+                        IN PROGRESS
+                    </small>
+
+                    <strong id="inProgressRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        Being worked on
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <article class="dashboard-stat-card">
+
+                <div class="stat-icon green">
+                    ✓
+                </div>
+
+                <div>
+
+                    <small>
+                        RESOLVED
+                    </small>
+
+                    <strong id="resolvedRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        Successfully completed
+                    </span>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             NEW REQUEST
+             ================================================= -->
+
+        <section
+            id="new-request"
+            class="dashboard-section"
+        >
+
+            <div class="dashboard-section-header">
+
+                <div>
+
+                    <span class="dashboard-section-label">
+                        MAINTENANCE
+                    </span>
+
+                    <h2>
+                        Report an issue
+                    </h2>
+
+                    <p>
+                        Tell us what needs attention on campus.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-form-card">
+
+                <form id="requestForm">
+
+
+                    <!-- Title -->
+
+                    <div class="dashboard-form-group">
+
+                        <label for="requestTitle">
+                            Issue title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="requestTitle"
+                            placeholder="e.g. AC not working"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Description -->
+
+                    <div class="dashboard-form-group">
+
+                        <label for="requestDescription">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="requestDescription"
+                            rows="4"
+                            placeholder="Describe the problem..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="dashboard-form-row">
+
+
+                        <!-- Location -->
+
+                        <div class="dashboard-form-group">
+
+                            <label for="requestLocation">
+                                Location
+                            </label>
+
+                            <input
+                                type="text"
+                                id="requestLocation"
+                                placeholder="e.g. Block A - Room 205"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Category -->
+
+                        <div class="dashboard-form-group">
+
+                            <label for="requestCategory">
+                                Category
+                            </label>
+
+                            <select id="requestCategory" required>
+
+                                <option value="">
+                                    Select category
+                                </option>
+
+                                <option value="ELECTRICAL">
+                                    Electrical
+                                </option>
+
+                                <option value="PLUMBING">
+                                    Plumbing
+                                </option>
+
+                                <option value="CIVIL">
+                                    Civil
+                                </option>
+
+                                <option value="CLEANING">
+                                    Cleaning
+                                </option>
+
+                                <option value="IT">
+                                    IT / Network
+                                </option>
+
+                                <option value="OTHER">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Issue Photo -->
+
+<div class="dashboard-form-group">
+
+    <label for="issuePhoto">
+        Issue Photo
+        <span style="
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.65;
+        ">
+            (Optional)
+        </span>
+    </label>
+
+    <input
+        type="file"
+        id="issuePhoto"
+        accept="image/*"
+    >
+
+    <small style="
+        display: block;
+        margin-top: 6px;
+        font-size: 11px;
+        opacity: 0.6;
+    ">
+        Upload a photo showing the issue, if available.
+    </small>
+
+</div>
+
+
+                    <!-- Message -->
+
+                    <div
+                        id="requestMessage"
+                        class="dashboard-message hidden"
+                    ></div>
+
+
+                    <!-- Submit -->
+
+                    <button
+                        type="submit"
+                        id="requestButton"
+                        class="btn btn-primary dashboard-submit"
+                    >
+
+                        <span id="requestButtonText">
+                            Submit request
+                        </span>
+
+                        <span
+                            id="requestSpinner"
+                            class="spinner hidden"
+                        ></span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MY REQUESTS
+             ================================================= -->
+
+        <section
+            id="my-requests"
+            class="dashboard-section"
+        >
+
+            <div class="dashboard-section-header request-list-header">
+
+                <div>
+
+                    <span class="dashboard-section-label">
+                        ACTIVITY
+                    </span>
+
+                    <h2>
+                        My requests
+                    </h2>
+
+                    <p>
+                        Track the maintenance issues you have reported.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="refreshRequests"
+                    class="btn btn-light"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <div
+                id="requestsList"
+                class="requests-list"
+            >
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ◷
+                    </div>
+
+                    <h3>
+                        No requests yet
+                    </h3>
+
+                    <p>
+                        Your maintenance requests will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Footer -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                CampusFix
+            </span>
+
+            <span>
+                Smart Campus Maintenance
+            </span>
+
+        </footer>
+
+    </main>
+
+
+    <script src="./js/common.js"></script>
+    <script src="./js/fx.js"></script>
+    <script src="./js/student.js"></script>
+
+</body>
+
+</html>

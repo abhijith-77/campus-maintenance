@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Dashboard — CampusFix</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/admin.css">
+
+</head>
+
+
+<body class="admin-page">
+
+
+    <!-- Ambient Background -->
+
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="admin-sidebar">
+
+
+        <!-- Brand -->
+
+        <a href="index.html" class="admin-brand">
+
+            <div class="brand-mark">
+                <span></span>
+            </div>
+
+            <div class="brand-text">
+
+                <strong>CampusFix</strong>
+
+                <small>
+                    Smart Campus Maintenance
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- Navigation -->
+
+        <nav class="admin-nav">
+
+            <a
+                href="#dashboard"
+                class="admin-nav-item active"
+            >
+                <span>▦</span>
+                Dashboard
+            </a>
+
+
+            <a
+                href="#users"
+                class="admin-nav-item"
+            >
+                <span>♙</span>
+                Users
+            </a>
+
+
+            <a
+                href="#requests"
+                class="admin-nav-item"
+            >
+                <span>◷</span>
+                Requests
+            </a>
+
+
+            <a
+                href="#analytics"
+                class="admin-nav-item"
+            >
+                <span>◒</span>
+                Overview
+            </a>
+
+        </nav>
+
+
+        <!-- Admin User -->
+
+        <div class="admin-sidebar-bottom">
+
+            <div class="admin-user">
+
+                <div
+                    class="admin-avatar"
+                    id="adminSidebarAvatar"
+                >
+                    A
+                </div>
+
+                <div>
+
+                    
+                       <strong id="adminSidebarName">Admin</strong>
+
+                    <small>
+                        Administrator
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="adminLogout"
+                class="admin-logout"
+            >
+
+                <span>↪</span>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="admin-main" id="dashboard">
+
+
+        <!-- =================================================
+             TOPBAR
+             ================================================= -->
+
+        <header class="admin-topbar">
+
+            <div>
+
+                <span class="admin-eyebrow">
+                    ADMINISTRATOR DASHBOARD
+                </span>
+
+                <h1>
+                    Welcome,
+                    <span id="adminWelcomeName">Admin</span>
+                   
+                </h1>
+
+                <p>
+                    Monitor campus maintenance activity and users.
+                </p>
+
+            </div>
+
+
+            <div
+                class="admin-top-avatar"
+                id="adminTopAvatar"
+            >
+                A
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             OVERVIEW STATS
+             ================================================= -->
+
+        <section
+            id="analytics"
+            class="admin-stats"
+        >
+
+
+            <article class="admin-stat-card">
+
+                <div class="admin-stat-icon blue">
+                    ♙
+                </div>
+
+                <div>
+
+                    <small>
+                        TOTAL USERS
+                    </small>
+
+                    <strong id="adminTotalUsers">
+                        0
+                    </strong>
+
+                    <span>
+                        Registered users
+                    </span>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="admin-stat-card">
+
+                <div class="admin-stat-icon gold">
+                    ⚙
+                </div>
+
+                <div>
+
+                    <small>
+                        TOTAL STAFF
+                    </small>
+
+                    <strong id="adminTotalStaff">
+                        0
+                    </strong>
+
+                    <span>
+                        Maintenance staff
+                    </span>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="admin-stat-card">
+
+                <div class="admin-stat-icon mint">
+                    ◷
+                </div>
+
+                <div>
+
+                    <small>
+                        TOTAL REQUESTS
+                    </small>
+
+                    <strong id="adminTotalRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        All maintenance requests
+                    </span>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="admin-stat-card">
+
+                <div class="admin-stat-icon green">
+                    ✓
+                </div>
+
+                <div>
+
+                    <small>
+                        RESOLVED
+                    </small>
+
+                    <strong id="adminResolvedRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        Completed requests
+                    </span>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             REQUEST STATUS
+             ================================================= -->
+
+        <section class="admin-section">
+
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <span class="admin-section-label">
+                        REQUEST OVERVIEW
+                    </span>
+
+                    <h2>
+                        Maintenance status
+                    </h2>
+
+                    <p>
+                        Current status of all campus maintenance requests.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="adminRefresh"
+                    class="btn btn-light"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+
+            <div class="admin-status-grid">
+
+
+                <div class="admin-status-card pending">
+
+                    <span>
+                        PENDING
+                    </span>
+
+                    <strong id="adminPendingRequests">
+                        0
+                    </strong>
+
+                    <small>
+                        Awaiting action
+                    </small>
+
+                </div>
+
+
+                <div class="admin-status-card progress">
+
+                    <span>
+                        IN PROGRESS
+                    </span>
+
+                    <strong id="adminInProgressRequests">
+                        0
+                    </strong>
+
+                    <small>
+                        Currently being worked on
+                    </small>
+
+                </div>
+
+
+                <div class="admin-status-card resolved">
+
+                    <span>
+                        RESOLVED
+                    </span>
+
+                    <strong id="adminResolvedStatus">
+                        0
+                    </strong>
+
+                    <small>
+                        Successfully completed
+                    </small>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             USERS
+             ================================================= -->
+
+        <section
+            id="users"
+            class="admin-section"
+        >
+
+
+<div class="admin-section-header">
+
+    <div>
+
+        <span class="admin-section-label">
+            USER MANAGEMENT
+        </span>
+
+        <h2>
+            Campus users
+        </h2>
+
+        <p>
+            View registered students and maintenance staff.
+        </p>
+
+    </div>
+
+    <button
+        type="button"
+        id="addStaffButton"
+        class="btn btn-light"
+    >
+        + Add Staff
+    </button>
+
+</div>
+
+
+            <div
+                id="adminUsersList"
+                class="admin-users-list"
+            >
+
+                <div class="admin-loading">
+                    Loading users...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             REQUESTS
+             ================================================= -->
+
+        <section
+            id="requests"
+            class="admin-section"
+        >
+
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <span class="admin-section-label">
+                        MAINTENANCE
+                    </span>
+
+                    <h2>
+                        Recent requests
+                    </h2>
+
+                    <p>
+                        Monitor maintenance requests across the campus.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="adminRequestsList"
+                class="admin-requests-list"
+            >
+
+                <div class="admin-loading">
+                    Loading requests...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="admin-footer">
+
+            <span>
+                CampusFix
+            </span>
+
+            <span>
+                Administrator Portal
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+    <script src="./js/common.js"></script>
+    <script src="./js/fx.js"></script>
+    <script src="./js/admin.js"></script>
+
+</body>
+
+</html>

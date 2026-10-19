@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Staff Dashboard — CampusFix</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/staff.css">
+
+</head>
+
+
+<body class="staff-page">
+
+
+    <!-- Ambient Background -->
+
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="staff-sidebar">
+
+
+        <!-- Brand -->
+
+        <a href="index.html" class="staff-brand">
+
+            <div class="brand-mark">
+                <span></span>
+            </div>
+
+            <div class="brand-text">
+
+                <strong>CampusFix</strong>
+
+                <small>
+                    Smart Campus Maintenance
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- Navigation -->
+
+        <nav class="staff-nav">
+
+            <a
+                href="#dashboard"
+                class="staff-nav-item active"
+            >
+                <span>▦</span>
+                Dashboard
+            </a>
+
+
+            <a
+                href="#requests"
+                class="staff-nav-item"
+            >
+                <span>◷</span>
+                Requests
+            </a>
+
+
+            <a
+                href="#pending"
+                class="staff-nav-item"
+            >
+                <span>!</span>
+                Pending
+            </a>
+
+
+            <a
+                href="#in-progress"
+                class="staff-nav-item"
+            >
+                <span>↻</span>
+                In Progress
+            </a>
+
+        </nav>
+
+
+        <!-- User -->
+
+        <div class="staff-sidebar-bottom">
+
+            <div class="staff-user">
+
+                <div
+                    class="staff-avatar"
+                    id="staffSidebarAvatar"
+                >
+                    S
+                </div>
+
+                <div>
+
+                    <strong id="staffSidebarName">
+                        Staff
+                    </strong>
+
+                    <small>
+                        Maintenance Staff
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="staffLogout"
+                class="staff-logout"
+            >
+
+                <span>↪</span>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="staff-main" id="dashboard">
+
+
+        <!-- =================================================
+             TOPBAR
+             ================================================= -->
+
+        <header class="staff-topbar">
+
+            <div>
+
+                <span class="staff-eyebrow">
+                    MAINTENANCE DASHBOARD
+                </span>
+
+                <h1>
+                    Welcome,
+                    <span id="staffWelcomeName">
+                        Staff
+                    </span>
+                   
+                </h1>
+
+                <p>
+                    Manage and resolve campus maintenance requests.
+                </p>
+
+            </div>
+
+
+            <div
+                class="staff-top-avatar"
+                id="staffTopAvatar"
+            >
+                S
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             STATISTICS
+             ================================================= -->
+
+        <section class="staff-stats">
+
+
+            <article class="staff-stat-card">
+
+                <div class="staff-stat-icon blue">
+                    ▦
+                </div>
+
+                <div>
+
+                    <small>
+                        TOTAL REQUESTS
+                    </small>
+
+                    <strong id="staffTotalRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        All maintenance requests
+                    </span>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="staff-stat-card">
+
+                <div class="staff-stat-icon gold">
+                    !
+                </div>
+
+                <div>
+
+                    <small>
+                        PENDING
+                    </small>
+
+                    <strong id="staffPendingRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        Awaiting action
+                    </span>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="staff-stat-card">
+
+                <div class="staff-stat-icon mint">
+                    ↻
+                </div>
+
+                <div>
+
+                    <small>
+                        IN PROGRESS
+                    </small>
+
+                    <strong id="staffInProgressRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        Currently being fixed
+                    </span>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="staff-stat-card">
+
+                <div class="staff-stat-icon green">
+                    ✓
+                </div>
+
+                <div>
+
+                    <small>
+                        RESOLVED
+                    </small>
+
+                    <strong id="staffResolvedRequests">
+                        0
+                    </strong>
+
+                    <span>
+                        Completed requests
+                    </span>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             REQUESTS
+             ================================================= -->
+
+        <section
+            id="requests"
+            class="staff-section"
+        >
+
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="staff-section-label">
+                        WORK QUEUE
+                    </span>
+
+                    <h2>
+                        Maintenance requests
+                    </h2>
+
+                    <p>
+                        Review and update reported campus issues.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="staffRefresh"
+                    class="btn btn-light"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+
+            <!-- Request List -->
+
+            <div
+                id="staffRequestsList"
+                class="staff-requests-list"
+            >
+
+                <div class="staff-loading">
+                    Loading requests...
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             PENDING
+             ================================================= -->
+
+        <section
+            id="pending"
+            class="staff-section"
+        >
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="staff-section-label">
+                        PENDING
+                    </span>
+
+                    <h2>
+                        Requests awaiting action
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="staffPendingList"
+                class="staff-requests-list"
+            >
+
+                <div class="staff-empty">
+                    No pending requests.
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             IN PROGRESS
+             ================================================= -->
+
+        <section
+            id="in-progress"
+            class="staff-section"
+        >
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="staff-section-label">
+                        ACTIVE WORK
+                    </span>
+
+                    <h2>
+                        Requests in progress
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="staffInProgressList"
+                class="staff-requests-list"
+            >
+
+                <div class="staff-empty">
+                    No requests are currently in progress.
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="staff-footer">
+
+            <span>
+                CampusFix
+            </span>
+
+            <span>
+                Maintenance Staff Portal
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+    <script src="./js/common.js"></script>
+    <script src="./js/fx.js"></script>
+    <script src="./js/staff.js"></script>
+
+</body>
+
+</html>

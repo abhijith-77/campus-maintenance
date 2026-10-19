@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFix — Smart Campus Maintenance</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="navbar">
+        <a href="index.html" class="brand">
+            <div class="brand-mark"><span></span></div>
+            <div class="brand-text"><strong>CampusFix</strong></div>
+        </a>
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="login.html" class="btn btn-ghost">Student login</a>
+            <a href="login.html?role=staff" class="btn btn-ghost">Staff login</a>
+            <a href="register.html" class="btn btn-primary">Get started</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div>
+                <h1>Report it. <span>Watch it get fixed.</span></h1>
+                <p class="hero-description">Report a maintenance issue in a minute, see who is assigned, and get a photo when the work is done.</p>
+                <div class="hero-actions">
+                    <a href="login.html" class="btn btn-primary btn-large">Report an issue</a>
+                    <a href="#features" class="btn btn-light btn-large">See how it works</a>
+                </div>
+                <p class="hero-note"><span class="check">✓</span>For students, maintenance staff and administrators</p>
+            </div>
+
+            <div class="scene" aria-hidden="true">
+                <article class="ticket glass">
+                    <header>
+                        <span>Block A, Room 205</span>
+                        <span class="state"><b class="s1">Pending</b><b class="s2">In progress</b><b class="s3">Resolved</b></span>
+                    </header>
+                    <h3>AC not working</h3>
+                    <p>Cooling stopped this morning. Electrical team notified.</p>
+                    <div class="track">
+                        <i></i><div class="bead"></div>
+                        <em>Pending</em><em>In progress</em><em>Resolved</em>
+                    </div>
+                </article>
+                <article class="mini mini-a glass"><b>⚙</b>Assigned to electrical staff</article>
+                <article class="mini mini-b glass"><b>✓</b>Completion photo attached</article>
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <div class="section-heading">
+                <h2>Everyone sees the same repair</h2>
+                <p>Students report, administrators assign, staff fix. Every step shows up for everyone involved.</p>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">+</div>
+                    <h3>Report issues</h3>
+                    <p>Add a title, location, category and an optional photo of the problem.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon mint">◷</div>
+                    <h3>Track progress</h3>
+                    <p>Follow each request from pending to in progress to resolved.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon gold">✓</div>
+                    <h3>Finish with proof</h3>
+                    <p>Staff upload a completion photo when the job is done.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <div class="about-card">
+                <div>
+                    <h2>Something broken on campus?</h2>
+                    <p>Sign in and send your first request. It takes less time than writing an email.</p>
+                    <a href="login.html" class="btn btn-primary btn-large">Report an issue</a>
+                </div>
+                <div class="about-decoration">CF</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-brand"><strong>CampusFix</strong></div>
+        <p>© 2026 CampusFix. Built for better campuses.</p>
+    </footer>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/fx.js"></script>
+</body>
+</html>
