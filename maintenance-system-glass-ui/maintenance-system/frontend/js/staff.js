@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "https://campus-maintenance-e9ql.onrender.com";
 
 const token = sessionStorage.getItem("campusfix_token")
 
