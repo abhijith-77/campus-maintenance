@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:8080";
+
+const API_BASE_URL = "https://campus-maintenance-e9ql.onrender.com";
 
 const token = sessionStorage.getItem("campusfix_token");
 
@@ -6,940 +7,448 @@ if (!token) {
     window.location.href = "login.html";
 }
 
+/* ELEMENTS */
+const adminWelcomeName = document.getElementById("adminWelcomeName");
+const adminSidebarName = document.getElementById("adminSidebarName");
+const adminTopAvatar = document.getElementById("adminTopAvatar");
+const adminSidebarAvatar = document.getElementById("adminSidebarAvatar");
 
-/* =========================================================
-   ELEMENTS
-   ========================================================= */
+const adminTotalUsers = document.getElementById("adminTotalUsers");
+const adminTotalStaff = document.getElementById("adminTotalStaff");
+const adminTotalRequests = document.getElementById("adminTotalRequests");
+const adminResolvedRequests = document.getElementById("adminResolvedRequests");
+const adminPendingRequests = document.getElementById("adminPendingRequests");
+const adminInProgressRequests = document.getElementById("adminInProgressRequests");
+const adminResolvedStatus = document.getElementById("adminResolvedStatus");
 
-const adminWelcomeName =
-    document.getElementById("adminWelcomeName");
+const adminUsersList = document.getElementById("adminUsersList");
+const adminRequestsList = document.getElementById("adminRequestsList");
+const adminRefresh = document.getElementById("adminRefresh");
+const adminLogout = document.getElementById("adminLogout");
+const addStaffButton = document.getElementById("addStaffButton");
 
-const adminSidebarName =
-    document.getElementById("adminSidebarName");
+window.adminUsers = [];
 
-const adminTopAvatar =
-    document.getElementById("adminTopAvatar");
-
-const adminSidebarAvatar =
-    document.getElementById("adminSidebarAvatar");
-
-const adminTotalUsers =
-    document.getElementById("adminTotalUsers");
-
-const adminTotalStaff =
-    document.getElementById("adminTotalStaff");
-
-const adminTotalRequests =
-    document.getElementById("adminTotalRequests");
-
-const adminResolvedRequests =
-    document.getElementById("adminResolvedRequests");
-
-const adminPendingRequests =
-    document.getElementById("adminPendingRequests");
-
-const adminInProgressRequests =
-    document.getElementById("adminInProgressRequests");
-
-const adminResolvedStatus =
-    document.getElementById("adminResolvedStatus");
-
-const adminUsersList =
-    document.getElementById("adminUsersList");
-
-const adminRequestsList =
-    document.getElementById("adminRequestsList");
-
-const adminRefresh =
-    document.getElementById("adminRefresh");
-
-const adminLogout =
-    document.getElementById("adminLogout");
-
-const addStaffButton =
-    document.getElementById("addStaffButton");
-
-
-/* =========================================================
-   LOAD DASHBOARD
-   ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-        loadAdminDashboard();
-    }
-);
-
+/* LOAD DASHBOARD */
+document.addEventListener("DOMContentLoaded", loadAdminDashboard);
 
 async function loadAdminDashboard() {
-
     try {
+        const users = await apiRequest("/users");
+        const requests = await apiRequest("/requests");
 
-        const users =
-            await apiRequest("/users");
+        if (!Array.isArray(users) || !Array.isArray(requests)) {
+            throw new Error("Unexpected data returned by the server.");
+        }
 
-        const requests =
-            await apiRequest("/requests");
-
-        // Store users for staff assignment
         window.adminUsers = users;
 
         setAdminDetails(users);
-
-        updateStatistics(
-            users,
-            requests
-        );
-
+        updateStatistics(users, requests);
         renderUsers(users);
-
         renderRequests(requests);
 
     } catch (error) {
-
-        console.error(error);
-
-        if (error.message === "Unauthorized") {
-            logout();
-            return;
-        }
+        console.error("Admin dashboard loading error:", error);
 
         if (adminUsersList) {
             adminUsersList.innerHTML = `
                 <div class="admin-empty">
-                    Unable to load users.
-                </div>
-            `;
+                    Unable to load users. ${escapeHtml(error.message)}
+                </div>`;
         }
 
         if (adminRequestsList) {
             adminRequestsList.innerHTML = `
                 <div class="admin-empty">
                     Unable to load maintenance requests.
-                </div>
-            `;
+                </div>`;
+        }
+
+        if (error.message === "Unauthorized") {
+            logout();
         }
     }
 }
 
-
-/* =========================================================
-   ADMIN DETAILS
-   ========================================================= */
-
+/* ADMIN DETAILS */
 function setAdminDetails(users) {
-
-    const jwtPayload =
-        decodeJwtPayload(token);
-
+    const payload = decodeJwtPayload(token);
     let admin = null;
 
-    // Find admin using logged-in email
-    if (jwtPayload?.sub) {
-
+    if (payload?.sub) {
         admin = users.find(
-            user =>
-                user.email === jwtPayload.sub
+            user => user.email?.toLowerCase() ===
+                String(payload.sub).toLowerCase()
         );
     }
 
-    // Fallback: find any ADMIN user
     if (!admin) {
-
         admin = users.find(
-            user =>
-                String(user.role || "")
-                    .toUpperCase() === "ADMIN"
+            user => String(user.role || "").toUpperCase() === "ADMIN"
         );
     }
 
-    // No admin found
-    if (!admin) {
-        return;
-    }
+    const name = admin?.name || "Administrator";
+    const initial = name.trim().charAt(0).toUpperCase() || "A";
 
-    const name =
-        admin.name || "Admin";
-
-    // Update welcome name
-    if (adminWelcomeName) {
-        adminWelcomeName.textContent =
-            name;
-    }
-
-    // Update sidebar name
-    if (adminSidebarName) {
-        adminSidebarName.textContent =
-            name;
-    }
-
-    const initial =
-        name.trim()
-            .charAt(0)
-            .toUpperCase();
-
-    // Update top avatar
-    if (adminTopAvatar) {
-        adminTopAvatar.textContent =
-            initial;
-    }
-
-    // Update sidebar avatar
-    if (adminSidebarAvatar) {
-        adminSidebarAvatar.textContent =
-            initial;
-    }
+    if (adminWelcomeName) adminWelcomeName.textContent = name;
+    if (adminSidebarName) adminSidebarName.textContent = name;
+    if (adminTopAvatar) adminTopAvatar.textContent = initial;
+    if (adminSidebarAvatar) adminSidebarAvatar.textContent = initial;
 }
 
+/* STATISTICS */
+function updateStatistics(users, requests) {
+    const totalStaff = users.filter(
+        user => ["STAFF", "MAINTENANCE"].includes(
+            String(user.role || "").toUpperCase()
+        )
+    ).length;
 
-/* =========================================================
-   STATISTICS
-   ========================================================= */
+    const pending = requests.filter(
+        request => normalizeStatus(request.status) === "PENDING"
+    ).length;
 
-function updateStatistics(
-    users,
-    requests
-) {
+    const inProgress = requests.filter(
+        request => normalizeStatus(request.status) === "IN_PROGRESS"
+    ).length;
 
-    const totalUsers =
-        users.length;
+    const resolved = requests.filter(
+        request => normalizeStatus(request.status) === "RESOLVED"
+    ).length;
 
-    const totalStaff =
-        users.filter(
-            user =>
-                String(user.role || "")
-                    .toUpperCase() ===
-                "STAFF"
-        ).length;
-
-    const pending =
-        requests.filter(
-            request =>
-                normalizeStatus(request.status) ===
-                "PENDING"
-        ).length;
-
-    const inProgress =
-        requests.filter(
-            request =>
-                normalizeStatus(request.status) ===
-                "IN_PROGRESS"
-        ).length;
-
-    const resolved =
-        requests.filter(
-            request =>
-                normalizeStatus(request.status) ===
-                "RESOLVED"
-        ).length;
-
-    if (adminTotalUsers) {
-        adminTotalUsers.textContent =
-            totalUsers;
-    }
-
-    if (adminTotalStaff) {
-        adminTotalStaff.textContent =
-            totalStaff;
-    }
-
-    if (adminTotalRequests) {
-        adminTotalRequests.textContent =
-            requests.length;
-    }
-
-    if (adminResolvedRequests) {
-        adminResolvedRequests.textContent =
-            resolved;
-    }
-
-    if (adminPendingRequests) {
-        adminPendingRequests.textContent =
-            pending;
-    }
-
-    if (adminInProgressRequests) {
-        adminInProgressRequests.textContent =
-            inProgress;
-    }
-
-    if (adminResolvedStatus) {
-        adminResolvedStatus.textContent =
-            resolved;
-    }
+    if (adminTotalUsers) adminTotalUsers.textContent = users.length;
+    if (adminTotalStaff) adminTotalStaff.textContent = totalStaff;
+    if (adminTotalRequests) adminTotalRequests.textContent = requests.length;
+    if (adminResolvedRequests) adminResolvedRequests.textContent = resolved;
+    if (adminPendingRequests) adminPendingRequests.textContent = pending;
+    if (adminInProgressRequests) adminInProgressRequests.textContent = inProgress;
+    if (adminResolvedStatus) adminResolvedStatus.textContent = resolved;
 }
 
-
-/* =========================================================
-   USERS
-   ========================================================= */
-
+/* USERS */
 function renderUsers(users) {
-
-    if (!adminUsersList) {
-        return;
-    }
+    if (!adminUsersList) return;
 
     if (!users.length) {
-
-        adminUsersList.innerHTML = `
-            <div class="admin-empty">
-                No users found.
-            </div>
-        `;
-
+        adminUsersList.innerHTML =
+            '<div class="admin-empty">No users found.</div>';
         return;
     }
 
-    adminUsersList.innerHTML =
-        users.map(user => {
+    adminUsersList.innerHTML = users.map(user => {
+        const name = user.name || "Unknown User";
+        const initial = name.trim().charAt(0).toUpperCase();
+        const role = String(user.role || "USER").toUpperCase();
 
-            const name =
-                user.name || "Unknown User";
-
-            const initial =
-                name.trim()
-                    .charAt(0)
-                    .toUpperCase();
-
-            const role =
-                String(
-                    user.role || "USER"
-                ).toUpperCase();
-
-            return `
-                <article class="admin-user-card">
-
-                    <div class="admin-user-info">
-
-                        <div class="admin-user-card-avatar">
-                            ${escapeHtml(initial)}
-                        </div>
-
-                        <div class="admin-user-details">
-
-                            <strong>
-                                ${escapeHtml(name)}
-                            </strong>
-
-                            <span>
-                                ${escapeHtml(
-                                    user.email || "No email"
-                                )}
-                            </span>
-
-                        </div>
-
+        return `
+            <article class="admin-user-card">
+                <div class="admin-user-info">
+                    <div class="admin-user-card-avatar">
+                        ${escapeHtml(initial)}
                     </div>
-
-                    <span class="admin-role">
-                        ${escapeHtml(role)}
-                    </span>
-
-                </article>
-            `;
-
-        }).join("");
+                    <div class="admin-user-details">
+                        <strong>${escapeHtml(name)}</strong>
+                        <span>${escapeHtml(user.email || "No email")}</span>
+                    </div>
+                </div>
+                <span class="admin-role">${escapeHtml(role)}</span>
+            </article>`;
+    }).join("");
 }
 
-
-/* =========================================================
-   REQUESTS
-   ========================================================= */
-
+/* MAINTENANCE REQUESTS */
 function renderRequests(requests) {
-
-    if (!adminRequestsList) {
-        return;
-    }
+    if (!adminRequestsList) return;
 
     if (!requests.length) {
-
-        adminRequestsList.innerHTML = `
-            <div class="admin-empty">
-                No maintenance requests found.
-            </div>
-        `;
-
+        adminRequestsList.innerHTML =
+            '<div class="admin-empty">No maintenance requests found.</div>';
         return;
     }
 
-    requests.sort(
-        (a, b) =>
-            Number(b.id) -
-            Number(a.id)
+    const sortedRequests = [...requests].sort(
+        (a, b) => Number(b.id) - Number(a.id)
     );
 
-    adminRequestsList.innerHTML =
-        requests.map(request =>
-            createRequestCard(request)
-        ).join("");
+    adminRequestsList.innerHTML = sortedRequests
+        .map(createRequestCard).join("");
 }
 
-
-/* =========================================================
-   REQUEST CARD
-   ========================================================= */
-
 function createRequestCard(request) {
+    const status = normalizeStatus(request.status);
 
-    const status =
-        normalizeStatus(request.status);
+    const statusClasses = {
+        PENDING: "admin-status-pending",
+        IN_PROGRESS: "admin-status-progress",
+        RESOLVED: "admin-status-resolved"
+    };
 
-    let statusClass =
-        "admin-status-default";
+    const statusClass = statusClasses[status] || "admin-status-default";
+    const displayStatus = status === "IN_PROGRESS"
+        ? "In Progress"
+        : capitalize(status || "Unknown");
 
-    if (status === "PENDING") {
-        statusClass =
-            "admin-status-pending";
-    }
-
-    if (status === "IN_PROGRESS") {
-        statusClass =
-            "admin-status-progress";
-    }
-
-    if (status === "RESOLVED") {
-        statusClass =
-            "admin-status-resolved";
-    }
-
-    const displayStatus =
-        status === "IN_PROGRESS"
-            ? "In Progress"
-            : capitalize(
-                status || "Unknown"
-            );
+    const staffControls = status !== "RESOLVED"
+        ? `
+            <div class="admin-assign-box">
+                <select class="admin-staff-select" id="staff-${Number(request.id)}">
+                    <option value="">Select Staff</option>
+                    ${getStaffOptions(request.assignedStaffId)}
+                </select>
+                <button class="admin-assign-btn"
+                    onclick="assignStaff(${Number(request.id)})">
+                    Assign Staff
+                </button>
+            </div>`
+        : '<div class="admin-resolved-label">✓ Request Resolved</div>';
 
     return `
         <article class="admin-request-card">
-
             <div class="admin-request-top">
-
                 <div>
-
                     <div class="admin-request-title">
-                        ${escapeHtml(
-                            request.title ||
-                            "Untitled request"
-                        )}
+                        ${escapeHtml(request.title || "Untitled request")}
                     </div>
-
                     <div class="admin-request-description">
-                        ${escapeHtml(
-                            request.description ||
-                            "No description provided."
-                        )}
+                        ${escapeHtml(request.description || "No description provided.")}
                     </div>
-
                 </div>
-
-                <span
-                    class="admin-request-status ${statusClass}"
-                >
-                    ${displayStatus}
+                <span class="admin-request-status ${statusClass}">
+                    ${escapeHtml(displayStatus)}
                 </span>
-
             </div>
 
             <div class="admin-request-details">
-
                 <div class="admin-detail">
-
-                    <small>
-                        Location
-                    </small>
-
-                    <span>
-                        ${escapeHtml(
-                            request.location ||
-                            "Not specified"
-                        )}
-                    </span>
-
+                    <small>Location</small>
+                    <span>${escapeHtml(request.location || "Not specified")}</span>
                 </div>
-
                 <div class="admin-detail">
-
-                    <small>
-                        Category
-                    </small>
-
-                    <span>
-                        ${escapeHtml(
-                            request.category ||
-                            "Other"
-                        )}
-                    </span>
-
+                    <small>Category</small>
+                    <span>${escapeHtml(request.category || "Other")}</span>
                 </div>
-
                 <div class="admin-detail">
-
-                    <small>
-                        Student ID
-                    </small>
-
-                    <span>
-                        ${request.studentId ?? "-"}
-                    </span>
-
+                    <small>Student ID</small>
+                    <span>${escapeHtml(request.studentId ?? "-")}</span>
                 </div>
-
                 <div class="admin-detail">
-
-                    <small>
-                        Assigned Staff
-                    </small>
-
-                    <span>
-                        ${getStaffName(
-                            request.assignedStaffId
-                        )}
-                    </span>
-
+                    <small>Assigned Staff</small>
+                    <span>${getStaffName(request.assignedStaffId)}</span>
                 </div>
-
             </div>
-
-            ${
-                status !== "RESOLVED"
-                    ? `
-                        <div class="admin-assign-box">
-
-                            <select
-                                class="admin-staff-select"
-                                id="staff-${request.id}"
-                            >
-
-                                <option value="">
-                                    Select Staff
-                                </option>
-
-                                ${getStaffOptions(
-                                    request.assignedStaffId
-                                )}
-
-                            </select>
-
-                            <button
-                                class="admin-assign-btn"
-                                onclick="assignStaff(${request.id})"
-                            >
-                                Assign Staff
-                            </button>
-
-                        </div>
-                    `
-                    : `
-                        <div class="admin-resolved-label">
-                            ✓ Request Resolved
-                        </div>
-                    `
-            }
-
-        </article>
-    `;
+            ${staffControls}
+        </article>`;
 }
 
-
-/* =========================================================
-   STAFF ASSIGNMENT
-   ========================================================= */
-
+/* STAFF HELPERS */
 function getStaffUsers() {
-
-    if (!window.adminUsers) {
-        return [];
-    }
-
-    return window.adminUsers.filter(
-        user =>
-            String(user.role || "")
-                .toUpperCase() === "STAFF"
+    return window.adminUsers.filter(user =>
+        ["STAFF", "MAINTENANCE"].includes(
+            String(user.role || "").toUpperCase()
+        )
     );
 }
 
-
 function getStaffOptions(assignedStaffId) {
-
-    const staffUsers =
-        getStaffUsers();
-
-    return staffUsers.map(staff => `
-
-        <option
-            value="${staff.id}"
-            ${
-                Number(staff.id) ===
-                Number(assignedStaffId)
-                    ? "selected"
-                    : ""
-            }
-        >
-            ${escapeHtml(
-                staff.name ||
-                `Staff #${staff.id}`
-            )}
-        </option>
-
-    `).join("");
+    return getStaffUsers().map(staff => `
+        <option value="${Number(staff.id)}"
+            ${Number(staff.id) === Number(assignedStaffId) ? "selected" : ""}>
+            ${escapeHtml(staff.name || `Staff #${staff.id}`)}
+        </option>`
+    ).join("");
 }
 
-
 function getStaffName(staffId) {
-
-    if (
-        staffId === null ||
-        staffId === undefined ||
-        staffId === ""
-    ) {
+    if (staffId === null || staffId === undefined || staffId === "") {
         return "Not assigned";
     }
 
-    const staff =
-        getStaffUsers().find(
-            user =>
-                Number(user.id) ===
-                Number(staffId)
-        );
+    const staff = getStaffUsers().find(
+        user => Number(user.id) === Number(staffId)
+    );
 
-    if (staff) {
-
-        return escapeHtml(
-            staff.name ||
-            `Staff #${staffId}`
-        );
-    }
-
-    return `Staff #${staffId}`;
+    return staff
+        ? escapeHtml(staff.name || `Staff #${staffId}`)
+        : `Staff #${Number(staffId)}`;
 }
 
-
+/* ASSIGN STAFF */
 async function assignStaff(requestId) {
-
-    const select =
-        document.getElementById(
-            `staff-${requestId}`
-        );
+    const select = document.getElementById(`staff-${requestId}`);
 
     if (!select || !select.value) {
-
-        alert(
-            "Please select a staff member."
-        );
-
+        alert("Please select a staff member.");
         return;
     }
 
-    const staffId =
-        Number(select.value);
+    const staffId = Number(select.value);
 
     try {
-
         await apiRequest(
             `/requests/${requestId}/assign?staffId=${staffId}`,
-            {
-                method: "PUT"
-            }
+            { method: "PUT" }
         );
 
-        alert(
-            "Staff assigned successfully."
-        );
-
+        alert("Staff assigned successfully.");
         await loadAdminDashboard();
 
     } catch (error) {
-
-        console.error(error);
+        console.error("Staff assignment failed:", error);
 
         if (error.message === "Unauthorized") {
-
             logout();
-
             return;
         }
 
-        alert(
-            "Unable to assign staff."
-        );
+        alert(`Unable to assign staff: ${error.message}`);
     }
 }
 
-
-/* =========================================================
-   ADD STAFF
-   ========================================================= */
-
+/* ADD STAFF */
 if (addStaffButton) {
+    addStaffButton.addEventListener("click", async () => {
+        const name = prompt("Enter staff name:");
+        if (!name?.trim()) return;
 
-    addStaffButton.addEventListener(
-        "click",
-        () => {
+        const email = prompt("Enter staff email:");
+        if (!email?.trim()) return;
 
-            const name =
-                prompt("Enter staff name:");
+        const password = prompt("Enter staff password:");
+        if (!password) return;
 
-            if (!name || !name.trim()) {
-                return;
-            }
-
-            const email =
-                prompt("Enter staff email:");
-
-            if (!email || !email.trim()) {
-                return;
-            }
-
-            const password =
-                prompt("Enter staff password:");
-
-            if (!password || !password.trim()) {
-                return;
-            }
-
-            createStaff(
-                name.trim(),
-                email.trim(),
-                password.trim()
-            );
-        }
-    );
-}
-
-
-async function createStaff(
-    name,
-    email,
-    password
-) {
-
-    try {
-
-        await apiRequest(
-            "/users",
-            {
+        try {
+            await apiRequest("/users", {
                 method: "POST",
-
                 body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    password: password,
+                    name: name.trim(),
+                    email: email.trim(),
+                    password,
                     role: "STAFF"
                 })
+            });
+
+            alert("Staff added successfully.");
+            await loadAdminDashboard();
+
+        } catch (error) {
+            console.error("Adding staff failed:", error);
+
+            if (error.message === "Unauthorized") {
+                logout();
+                return;
             }
-        );
 
-        alert(
-            "Staff added successfully."
-        );
-
-        await loadAdminDashboard();
-
-    } catch (error) {
-
-        console.error(error);
-
-        if (
-            error.message === "Unauthorized"
-        ) {
-            logout();
-            return;
+            alert(`Unable to add staff: ${error.message}`);
         }
-
-        alert(
-            "Unable to add staff."
-        );
-    }
+    });
 }
 
-
-/* =========================================================
-   REFRESH
-   ========================================================= */
-
+/* REFRESH */
 if (adminRefresh) {
+    adminRefresh.addEventListener("click", async () => {
+        adminRefresh.disabled = true;
 
-    adminRefresh.addEventListener(
-        "click",
-        async () => {
-
-            adminRefresh.disabled = true;
-
-            try {
-
-                await loadAdminDashboard();
-
-            } catch (error) {
-
-                console.error(error);
-
-            } finally {
-
-                adminRefresh.disabled = false;
-            }
+        try {
+            await loadAdminDashboard();
+        } finally {
+            adminRefresh.disabled = false;
         }
-    );
+    });
 }
 
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
+/* LOGOUT */
 if (adminLogout) {
-
-    adminLogout.addEventListener(
-        "click",
-        logout
-    );
+    adminLogout.addEventListener("click", logout);
 }
-
 
 function logout() {
-
-    sessionStorage.removeItem(
-        "campusfix_token"
-    );
-
-    sessionStorage.removeItem(
-        "campusfix_role"
-    );
-
-    window.location.href =
-        "login.html";
+    sessionStorage.removeItem("campusfix_token");
+    sessionStorage.removeItem("campusfix_role");
+    window.location.href = "login.html";
 }
 
+/* API REQUEST */
+async function apiRequest(endpoint, options = {}) {
+    let response;
 
-/* =========================================================
-   API
-   ========================================================= */
-
-async function apiRequest(
-    endpoint,
-    options = {}
-) {
-
-    const response =
-        await fetch(
-            `${API_BASE_URL}${endpoint}`,
-            {
-                ...options,
-
-                headers: {
-
-                    "Content-Type":
-                        "application/json",
-
-                    "Authorization":
-                        `Bearer ${token}`,
-
-                    ...(options.headers || {})
-                }
+    try {
+        response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+                ...(options.headers || {})
             }
-        );
-
-    if (
-        response.status === 401 ||
-        response.status === 403
-    ) {
-
+        });
+    } catch (error) {
+        console.error(`Network error calling ${endpoint}:`, error);
         throw new Error(
-            "Unauthorized"
+            "Cannot connect to the backend. Check the backend URL and CORS settings."
         );
+    }
+
+    if (response.status === 401 || response.status === 403) {
+        throw new Error("Unauthorized");
     }
 
     if (!response.ok) {
-
+        const details = await response.text().catch(() => "");
         throw new Error(
-            "Request failed."
+            `${endpoint} failed (HTTP ${response.status})` +
+            (details ? `: ${details.slice(0, 180)}` : "")
         );
     }
 
-    return response.json();
-}
+    if (response.status === 204) return null;
 
-
-/* =========================================================
-   JWT
-   ========================================================= */
-
-function decodeJwtPayload(token) {
+    const text = await response.text();
+    if (!text) return null;
 
     try {
+        return JSON.parse(text);
+    } catch {
+        throw new Error(`${endpoint} returned an invalid JSON response.`);
+    }
+}
 
-        const parts =
-            token.split(".");
+/* JWT PAYLOAD */
+function decodeJwtPayload(jwt) {
+    try {
+        const parts = jwt.split(".");
+        if (parts.length !== 3) return null;
 
-        if (parts.length !== 3) {
-            return null;
-        }
+        const base64 = parts[1]
+            .replace(/-/g, "+")
+            .replace(/_/g, "/");
 
-        const base64 =
-            parts[1]
-                .replace(/-/g, "+")
-                .replace(/_/g, "/");
-
-        const json =
-            decodeURIComponent(
-                atob(base64)
-                    .split("")
-                    .map(
-                        char =>
-                            "%" +
-                            (
-                                "00" +
-                                char.charCodeAt(0)
-                                    .toString(16)
-                            ).slice(-2)
-                    )
-                    .join("")
-            );
-
-        return JSON.parse(json);
-
-    } catch (error) {
-
-        console.error(
-            "Unable to decode JWT:",
-            error
+        const padded = base64.padEnd(
+            base64.length + (4 - base64.length % 4) % 4,
+            "="
         );
 
+        return JSON.parse(atob(padded));
+    } catch (error) {
+        console.error("Unable to decode JWT:", error);
         return null;
     }
 }
 
-
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
+/* HELPERS */
 function normalizeStatus(status) {
-
     return String(status || "")
         .trim()
         .toUpperCase()
         .replace(/[\s-]+/g, "_");
 }
 
-
 function capitalize(value) {
-
-    if (!value) {
-        return "";
-    }
-
-    return (
-        value.charAt(0) +
-        value.slice(1).toLowerCase()
-    );
+    if (!value) return "";
+    return value.charAt(0) + value.slice(1).toLowerCase();
 }
 
-
 function escapeHtml(value) {
-
     return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
