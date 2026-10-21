@@ -1,3 +1,4 @@
+
 package Campus.Maintenance.System.config;
 
 import org.springframework.context.annotation.Bean;
@@ -15,9 +16,7 @@ public class SecurityConfig {
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter) {
-
-        this.jwtAuthenticationFilter =
-                jwtAuthenticationFilter;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -35,26 +34,28 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                .requestMatchers("/auth/login")
-                .permitAll()
+                // Public homepage and login
+                .requestMatchers(
+                    "/",
+                    "/index.html",
+                    "/favicon.ico",
+                    "/auth/login"
+                ).permitAll()
 
-                // Allow new student registration
+                // Allow student registration
                 .requestMatchers(
                     HttpMethod.POST,
                     "/users"
-                )
-                .permitAll()
+                ).permitAll()
 
                 // Allow uploaded images
-                .requestMatchers("/uploads/**")
-                .permitAll()
+                .requestMatchers("/uploads/**").permitAll()
 
-                // Other user operations require login
-                .requestMatchers("/users/**")
-                .authenticated()
+                // Other user endpoints require authentication
+                .requestMatchers("/users/**").authenticated()
 
-                .anyRequest()
-                .authenticated()
+                // Protect all other endpoints
+                .anyRequest().authenticated()
             )
 
             .addFilterBefore(
