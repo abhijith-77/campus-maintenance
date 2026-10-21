@@ -1,3 +1,4 @@
+
 package Campus.Maintenance.System.config;
 
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,8 @@ public class CorsConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5500",
-                "http://127.0.0.1:5500"
+                "http://127.0.0.1:5500",
+                "https://campus-maintenance-irap.onrender.com"
         ));
 
         configuration.setAllowedMethods(List.of(
